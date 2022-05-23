@@ -1,0 +1,97 @@
+-- SECTION1 - Q.1
+ create table DEPT(
+DEPTNO int,
+DNAME char(15),
+LOC char(20)
+);
+insert into dept values(10,'ACCOUNTING','NEYYORK'),
+(20,'RESEARCH','DALLAS'),(30,'SALES','CHICAGO'),
+(40,'OPERATION','BOSTON');
+select * from dept;
+
+
+-- SECTION 1 --Q.2
+ create table EMP(
+EMPNO int(4),ENAME varchar(10),JOB varchar(9),
+HIREDATE date,SAL float(7,2),COMM float(7,2),
+DEPTNO int(2)
+);
+insert into EMP values (7839,'KING', 'MANAGER', '1991-11-17', 5000, NULL, 10),
+(7698 ,'BLAKE', 'CLERK','1981-05-01',2850, NULL, 30),
+(7782, 'CLARK', 'MANAGER' ,'1981-06-09' ,2450, NULL, 10),
+(7566, 'JONES', 'CLERK', '1981-04-02' ,2975, NULL, 20),
+(7654, 'MARTIN' ,'SALESMAN', '1981-09-28', 1250, 1400, 30),
+(7499, 'ALLEN', 'SALESMAN', '1981-02-20' ,1600, 300, 30);
+select * from EMP;
+
+
+select ename from emp where sal between 2500 and 5000;   -- 	Q3
+select ename from emp order by ename desc;              --      Q4
+select lower(job) from emp;                             --      Q5
+select ename,length(ename) from emp;                    --      Q6
+select deptno,count(deptno) from emp group by deptno;     --     Q7
+select dept,dname,emp,ename from dept,emp where dept.deptno=emp.deptno;  --  Q8
+select position('AR' in ename) from emp ;               --       Q9
+select ename,sal,sal*0.2 as HRA from emp;                --     Q10
+
+-- SECTION2 - Q1
+create table temp5(
+value1 int,value2 int, value3 int,res char(10)
+);
+drop table temp5;
+delimiter //
+create function FUNC1(x int,y int,z int)
+returns boolean
+deterministic
+begin 
+if x <(y+z) then
+ if y < (x+z) & z <(x+y) then
+   insert into temp5 values (x,y,z,'true');
+    return true;
+   else
+	insert into temp5 values (x,y,z,'false');
+    return false;
+    end if;
+    	insert into temp5 values (x,y,z,'false');
+        return false;
+    end if;
+    end; //
+    delimiter ;
+    drop function func1;
+
+    delimiter //
+    create procedure mnl(a int,b int ,c int)
+    begin
+    declare k boolean default false;
+    set k=FUNC1(a,b,c) ;
+    end; //
+    delimiter ;
+    drop procedure mnl;
+    call mnl(10,20,30);
+   select * from temp5;
+
+
+-- SECTION2 -Q2
+create table temptemp(
+str1 varchar(25),
+str2 varchar(25),
+res varchar(25)
+);
+drop table temptemp;
+
+delimiter //
+create procedure PROC1( str1 varchar(20),str2 varchar(20))
+begin
+ if (str1 like concat('%',str2,'%')) then
+  insert into temptemp values (str1,str2,'str1 prensent in str2');
+  elseif (str2 like concat('%',str1,'%')) then
+  insert into temptemp values (str1,str2,'str1 prensent in str2');
+  else
+    insert into temptemp values (str1,str2,'not contains anything');
+    end if;
+end; //
+delimiter ;
+drop procedure PROC1;
+call PROC1 ('DAC','CDAC');
+select * from temptemp; 
+
